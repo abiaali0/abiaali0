@@ -1,0 +1,44 @@
+name: Business Audit Engine
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "business-audit-mvp/**"
+      - ".github/workflows/business-audit.yml"
+  schedule:
+    - cron: "15 13 * * 1-5"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: business-audit-mvp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: pytest -q
+      - name: Generate batch audits
+        run: python -m src.run_batch
+        env:
+          AUDIT_BRAND_NAME: ${{ vars.AUDIT_BRAND_NAME }}
+          AUDIT_CONTACT_NAME: ${{ vars.AUDIT_CONTACT_NAME }}
+          AUDIT_CONTACT_EMAIL: ${{ vars.AUDIT_CONTACT_EMAIL }}
+          AUDIT_CONTACT_PHONE: ${{ vars.AUDIT_CONTACT_PHONE }}
+      - name: Upload reports
+        if: ${{ hashFiles('business-audit-mvp/reports/**') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: business-audit-reports
+          path: business-audit-mvp/reports/
+          if-no-files-found: ignore
+          retention-days: 14
