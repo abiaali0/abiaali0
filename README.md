@@ -1,162 +1,124 @@
-<h1 align="center">Hi, I'm Abia Ali 👋</h1>
+# FlagForge
 
-<h3 align="center">Software Engineer | Applied AI | Backend Systems</h3>
+**A self-hosted feature-flag and progressive-delivery control plane.** FlagForge lets engineering teams create feature flags, target cohorts, perform deterministic percentage rollouts, evaluate flags from applications, and audit configuration changes from a live dashboard.
 
-<p align="center">
-I build reliable AI applications, developer tools, and scalable software systems.
-</p>
+> Built as a production-minded systems project: deterministic evaluation, persistent state, realtime updates, an SDK, tests, containers, and CI — not just a CRUD demo.
 
-<p align="center">
-  <a href="https://www.linkedin.com/in/abia-a-bab209265/">
-    <img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
-  </a>
-  <a href="https://abiaali888.wixsite.com/my-portfolio-2">
-    <img src="https://img.shields.io/badge/Portfolio-View%20My%20Work-111111?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Portfolio"/>
-  </a>
-  <a href="mailto:aabia013@gmail.com">
-    <img src="https://img.shields.io/badge/Email-Contact%20Me-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"/>
-  </a>
-</p>
+## Highlights
 
----
+- **Deterministic percentage rollouts** using SHA-256 bucketing so the same user receives a stable decision
+- **Attribute targeting** with `equals`, `in`, and `starts_with` operators
+- **Environment-aware flags** for development, staging, and production
+- **Realtime control-plane updates** over WebSockets
+- **Persistent SQLite storage** with an append-only audit trail
+- **Evaluation metrics** for flag decision volume and enabled-rate tracking
+- **Zero-dependency Python SDK** for consuming flags from another service
+- **React + TypeScript admin dashboard** with live toggles and rollout controls
+- **Docker Compose** local environment
+- **Automated tests and GitHub Actions CI**
 
-## About Me
+## Architecture
 
-I'm a Computer Science student and software engineer based in Toronto, Canada, with a strong interest in applied artificial intelligence, backend engineering, developer infrastructure, and production-ready machine learning systems.
+```mermaid
+flowchart LR
+    A[React Admin UI] -->|REST| B[FastAPI Control Plane]
+    A <-->|WebSocket events| B
+    C[Python SDK / App] -->|Evaluate flag| B
+    B --> D[(SQLite)]
+    B --> E[Deterministic Evaluator]
+    E --> F[Targeting Rules]
+    E --> G[SHA-256 Rollout Buckets]
+```
 
-I enjoy transforming ambitious ideas into software that is reliable, testable, scalable, and useful. My work spans AI-powered developer tools, retrieval systems, distributed infrastructure, financial technology, healthcare applications, and data-driven platforms.
+## Evaluation algorithm
 
-- 🤖 Building AI agents and LLM-powered applications
-- 🔎 Exploring retrieval, embeddings, reranking, and grounded generation
-- ⚙️ Designing scalable backend services and distributed systems
-- 🧪 Focused on testing, reliability, evaluation, and maintainable code
-- ☁️ Interested in cloud infrastructure and production AI deployment
-- 📍 Based in Toronto, Canada
+For each request, FlagForge:
 
-## What You'll Find Here
+1. Returns `false` immediately if the flag is disabled.
+2. Checks enabled targeting rules against request attributes.
+3. Hashes `flag_key:user_id` with SHA-256 to assign the user a stable bucket from `0.00` to `99.99`.
+4. Enables the feature when that bucket falls inside the configured rollout percentage.
 
-My repositories focus on complete engineering projects rather than isolated code samples. I aim to document:
+This avoids random decisions on every request and produces stable cohort membership without storing a row for every user.
 
-- System architecture and technical decisions
-- Testing and reliability strategies
-- API and database design
-- Performance measurements and results
-- Limitations, trade-offs, and future improvements
-- Clear installation and usage instructions
+## Run locally
 
-## Selected Projects
+```bash
+docker compose up --build
+```
 
-### 🤖 AI Software Engineering Agent
+Then open:
 
-An autonomous coding assistant that analyzes GitHub issues, retrieves relevant repository context, generates code changes, runs automated tests in Docker, repairs failures, and prepares pull-request summaries for developer review.
+- Dashboard: `http://localhost:5173`
+- API docs: `http://localhost:8000/docs`
+- Health check: `http://localhost:8000/health`
 
-**Technologies:** Python, FastAPI, LangChain, GitHub API, Docker, React, Pytest
+### Backend only
 
----
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
 
-### 🔎 AI Resume and Job-Matching Platform
+### Frontend only
 
-A full-stack AI platform that compares résumés with job descriptions, performs semantic matching, and generates targeted suggestions designed to improve application quality.
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-**Technologies:** Python, React, Node.js, PostgreSQL, NLP, REST APIs, Tailwind CSS
+## API example
 
----
+```bash
+curl -X POST http://localhost:8000/api/evaluate \
+  -H 'Content-Type: application/json' \
+  -d '{"flag_key":"smart-checkout","user_id":"user-1024","attributes":{"plan":"pro","country":"CA"}}'
+```
 
-### ⚙️ Distributed Task Queue System
+## Python SDK
 
-A backend job-processing system supporting asynchronous workers, retries, failure handling, status tracking, logging, and scalable execution of background tasks.
+```python
+from flagforge import FlagForgeClient
 
-**Technologies:** Python, FastAPI, Redis, PostgreSQL, Celery, Docker
+flags = FlagForgeClient("http://localhost:8000")
+if flags.enabled("smart-checkout", "user-1024", plan="pro", country="CA"):
+    show_new_checkout()
+```
 
----
+## Tests
 
-### 🛡️ Static Code Analysis Tool
+```bash
+cd backend
+pytest -q
+```
 
-A developer tool that scans source code for bugs, unused variables, security risks, style violations, and maintainability issues through automated analysis and command-line reporting.
+The test suite covers stable hashing, targeting semantics, disabled flags, persistence, updates, and audit logging.
 
-**Technologies:** Python, Java, AST Parsing, GitHub API, CLI Development, Unit Testing
+## Engineering trade-offs
 
----
+This version intentionally uses SQLite so a reviewer can run the full project with almost no setup. In a multi-instance deployment, the persistence layer can move to PostgreSQL and WebSocket fan-out can move to Redis Pub/Sub without changing the evaluation contract.
 
-### 📊 Financial Portfolio Risk Dashboard
+A production system at very high request volume would additionally distribute versioned flag snapshots to edge or in-process SDKs, reducing latency and removing a network hop from each flag check.
 
-An interactive financial dashboard that tracks portfolio performance, asset allocation, returns, volatility, and overall risk exposure using real-time analytics and data visualization.
+## Next extensions
 
-**Technologies:** Python, React, TypeScript, PostgreSQL, Pandas, NumPy, REST APIs
+- Multi-tenant organizations and RBAC
+- PostgreSQL + Redis Pub/Sub deployment mode
+- Flag prerequisites and multivariate experiments
+- Event ingestion for experiment conversion metrics
+- Versioned configuration snapshots and rollback
+- TypeScript SDK and streaming SDK updates
+- OpenTelemetry traces and Prometheus metrics
 
----
+## Resume-ready summary
 
-### 🗺️ GIS Digital Access Mapping Platform
-
-A GIS and data-integration project designed to improve how digital-access information is collected, structured, visualized, and transformed into community-impact insights.
-
-**Technologies:** GIS Mapping, Data Integration, Survey Analytics, Dashboard Design
-
-## Technical Skills
-
-### Languages
-
-`Python` `TypeScript` `JavaScript` `Java` `C++` `C` `SQL` `Bash`
-
-### Artificial Intelligence and Machine Learning
-
-`PyTorch` `TensorFlow` `Hugging Face` `Scikit-learn` `OpenCV` `Pandas` `NumPy`
-
-### Backend Engineering
-
-`FastAPI` `Node.js` `Express.js` `Flask` `Spring Boot` `REST APIs` `GraphQL`
-
-### Frontend Development
-
-`React` `Next.js` `Tailwind CSS` `HTML` `CSS`
-
-### Databases
-
-`PostgreSQL` `MongoDB` `MySQL` `Redis` `Firebase`
-
-### Cloud and Infrastructure
-
-`Docker` `GitHub Actions` `AWS` `GCP` `Azure` `Linux` `CI/CD`
-
-### Testing
-
-`Pytest` `Vitest` `Jest` `JUnit` `Cypress` `Playwright`
-
-## Current Areas of Interest
-
-- AI agents for software-engineering workflows
-- Retrieval-augmented generation and semantic search
-- Embedding and reranking systems
-- LLM evaluation, reliability, and safety
-- Distributed backend infrastructure
-- Developer productivity tools
-- Production machine-learning systems
-
-## Engineering Values
-
-I care about more than making a demo work. I focus on:
-
-- Clean and maintainable architecture
-- Reliable testing and error handling
-- Measurable performance
-- Thoughtful technical trade-offs
-- Secure handling of data and credentials
-- Clear documentation and communication
-
-## Let's Connect
-
-I'm always interested in discussing applied AI, software engineering, backend infrastructure, and developer tooling.
-
-<p align="center">
-  <a href="https://www.linkedin.com/in/abia-a-bab209265/">LinkedIn</a>
-  •
-  <a href="https://abiaali888.wixsite.com/my-portfolio-2">Portfolio</a>
-  •
-  <a href="mailto:aabia013@gmail.com">Email</a>
-</p>
+**FlagForge — Feature Flag & Experimentation Platform**  
+Built a full-stack progressive-delivery platform with FastAPI, React, TypeScript, WebSockets, and SQLite; implemented deterministic SHA-256 user bucketing, attribute-based targeting, percentage rollouts, audit logging, an application SDK, Dockerized local deployment, automated tests, and CI.
 
 ---
 
-<p align="center">
-  <i>Building intelligent systems that are reliable, testable, scalable, and useful.</i>
-</p>
+Built by **Abia Ali**.
