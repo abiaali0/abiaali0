@@ -2,17 +2,19 @@
 
 AuditLead is a zero-API-cost website audit tool designed to turn public business websites into qualified service opportunities. It checks a site's technical and conversion basics, scores the site, creates a client-friendly HTML report, and recommends a service package.
 
-## Why this can make money
+## How this can make money
 
-The software itself does not magically produce income. It removes the repetitive part of selling digital services: reviewing websites one by one. Add businesses to a CSV, let the batch runner audit them, then use the reports as personalized proof of what you can fix.
+The software does not guarantee income. It removes the repetitive part of selling digital services: reviewing websites one by one. Add businesses to a CSV, let the batch runner audit them, then use the reports as personalized proof of what you can fix.
 
-Suggested starting offers (edit these to match the client and scope):
+It now also includes an **optional paid self-service flow using Stripe Checkout**. A customer enters a website, pays, and receives the generated audit after payment is verified. No database is required for the MVP because the website URL and business name are stored in the Stripe Checkout session metadata.
+
+Suggested service offers (edit these to match the client and scope):
 
 - **Digital Cleanup — $350 one time**: smaller website/Google/profile fixes and cleanup.
 - **Complete Digital Refresh — $600 one time**: broader website, SEO, form, usability and digital-presence improvements.
 - **Full Digital Upgrade — starting at $900**: substantial redesigns, new features, automations and larger technical work.
 
-A future version can add a payment provider and paid self-service reports. The current MVP intentionally works without paid APIs or required cloud services.
+The default self-service audit price is **$19 CAD**, configurable through environment variables.
 
 ## What it audits
 
@@ -40,10 +42,33 @@ cd business-audit-mvp
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+cp .env.example .env
 uvicorn src.app:app --reload
 ```
 
-Open `http://127.0.0.1:8000` and enter a public website URL.
+Open `http://127.0.0.1:8000`.
+
+## Paid mode
+
+Create a Stripe account and put the secret key in `.env` or your hosting provider's secret/environment settings:
+
+```bash
+STRIPE_SECRET_KEY=sk_...
+PUBLIC_BASE_URL=https://your-domain.example
+AUDIT_PRICE_CENTS=1900
+AUDIT_CURRENCY=cad
+AUDIT_ENABLE_FREE_REPORTS=false
+```
+
+When Stripe is configured, the home page sends the customer to Stripe Checkout. After successful payment, `/paid-report` verifies the Checkout session and generates the report.
+
+Keep `STRIPE_SECRET_KEY` out of Git and never expose it in client-side code.
+
+For testing before payments are configured, leave `STRIPE_SECRET_KEY` blank and keep:
+
+```bash
+AUDIT_ENABLE_FREE_REPORTS=true
+```
 
 ## Run a batch in the background
 
@@ -85,8 +110,6 @@ AUDIT_CONTACT_EMAIL="you@example.com"
 AUDIT_CONTACT_PHONE=""
 ```
 
-No secrets are required for the core audit engine.
-
 ## API
 
 ### `POST /api/audit`
@@ -97,11 +120,19 @@ No secrets are required for the core audit engine.
 }
 ```
 
-Returns the structured audit result as JSON.
+Returns the structured audit result as JSON while free report mode is enabled.
 
 ### `GET /report?url=https://example.com`
 
-Returns the client-friendly HTML report.
+Returns the client-friendly HTML report while free report mode is enabled.
+
+### `GET /checkout?url=https://example.com&business=Example`
+
+Creates a Stripe Checkout session when payments are configured.
+
+### `GET /paid-report?session_id=...`
+
+Verifies that the Stripe Checkout session is paid, reads the audit target from the session metadata, and generates the report.
 
 ## Safety and limitations
 
@@ -111,11 +142,12 @@ Returns the client-friendly HTML report.
 - A score is a sales/diagnostic aid, not a guarantee of search ranking, revenue, accessibility compliance, or security.
 - Respect website terms, robots directives, reasonable request rates, and applicable anti-spam/privacy laws when contacting businesses.
 
-## Next revenue milestones
+## Revenue path
 
-1. Run 20–50 audits on businesses you would realistically serve.
+1. Use batch mode to run 20–50 audits on businesses you would realistically serve.
 2. Prioritize low-scoring sites with clear, fixable issues.
 3. Send a short personalized message offering the report and one specific fix.
-4. Close one-time projects first.
+4. Close one-time implementation projects.
 5. Convert satisfied clients into monthly maintenance/automation retainers.
-6. Later add payments + customer accounts for self-service paid audits.
+6. Deploy the public app and enable Stripe for self-service paid audits.
+7. Later add customer accounts, richer audits, recurring subscriptions, and paid upsells.
