@@ -64,42 +64,123 @@ I'm a **Computer Science student and software engineer in Toronto**, exploring a
 
 <sub>Descriptions reflect the current public implementations. Each repository documents its scope and future work.</sub>
 
-## Behind the code
+
+## Go deeper.
+
+<a href="https://abiaali0.github.io/abiaali0/#lab"><img src="assets/explore.svg" width="100%" alt="Beyond the obvious. Enter Abia's interactive engineering playground." /></a>
+
+### Choose your route
+
+| Explore the systems | Inspect the thinking | Run the experiment |
+| :--- | :--- | :--- |
+| **[Backend & infrastructure](https://github.com/abiaali0/distributed-task-queue)** | **[Code analysis & developer tools](https://github.com/abiaali0/static-code-analyzer)** | **[BFS versus A* playground](https://abiaali0.github.io/abiaali0/#lab)** |
+| Follow a job through an API, a queue, a worker, and persistent state. | See how source code becomes a syntax tree and actionable findings. | Build walls, choose a layout, and compare how two algorithms explore the same problem. |
+| FastAPI · Redis · Celery · PostgreSQL | Python · AST · CLI · Tests | Editable grid · Four layouts · Exploration counts |
+
+### Think like an engineer
+
+Three small problems. Make your prediction, then open the explanation.
 
 <details>
-<summary><strong>My engineering toolbox</strong></summary>
-<br>
+<summary><strong>01 / A worker finishes a job, then crashes before acknowledging it. What happens next?</strong></summary>
+
+The queue may deliver the job again. A retry is useful, but the side effect could happen twice.
+
+**The design question:** can the operation be made idempotent? A stable job identifier, a uniqueness constraint, and an atomic state transition can help prevent duplicate effects. External actions may also need an idempotency key.
+
+**The trade-off:** retries improve resilience, but do not automatically provide exactly-once execution.
+
+[Explore the task queue implementation](https://github.com/abiaali0/distributed-task-queue)
+
+<sub>This is a design discussion, not a claim that every mitigation is implemented in the repository.</sub>
+
+</details>
+
+<details>
+<summary><strong>02 / Can two shortest-path algorithms return the same answer while doing very different amounts of work?</strong></summary>
+
+Yes. **BFS** expands outward in layers. **A*** uses the distance travelled plus a heuristic estimate of the distance remaining.
+
+On this unweighted, four-directional grid, Manhattan distance is an admissible, consistent heuristic. Both algorithms find a shortest path when one exists. A* can explore fewer cells, although the advantage depends on the walls and tie-breaking.
+
+**Try it:** run the open field, then the slalom layout. Compare the exploration counts and path length.
+
+[Run the interactive comparison](https://abiaali0.github.io/abiaali0/#lab)
+
+</details>
+
+<details>
+<summary><strong>03 / Why does a Python function remember items from an earlier call?</strong></summary>
+
+Consider:
+
+```python
+def collect(item, bucket=[]):
+    bucket.append(item)
+    return bucket
+```
+
+The default list is created once, when the function is defined. Calls that omit `bucket` share that same list.
+
+```python
+def collect(item, bucket=None):
+    if bucket is None:
+        bucket = []
+    bucket.append(item)
+    return bucket
+```
+
+**The engineering lesson:** behaviour can be valid Python and still be surprising. A syntax-tree rule can flag mutable defaults before that surprise becomes a bug.
+
+[Inspect the static analyzer](https://github.com/abiaali0/static-code-analyzer)
+
+</details>
+
+### Open the toolbox
+
+<details>
+<summary><strong>Languages & application layers</strong></summary>
 
 | Layer | Tools |
 | :--- | :--- |
 | Languages | Python · TypeScript · JavaScript · Java · SQL |
 | Applications | FastAPI · React · Spring Boot |
-| Infrastructure | PostgreSQL · Redis · Celery · Docker · GitHub Actions |
-| Quality | Automated tests · API design · Clear documentation |
+| Infrastructure | PostgreSQL · Redis · Celery · Docker |
+| Quality | Automated tests · GitHub Actions · API documentation |
 
 </details>
 
 <details>
-<summary><strong>What I'm exploring</strong></summary>
-<br>
+<summary><strong>From a question to a working system</strong></summary>
 
-- Retrieval, embeddings, and grounded generation
-- AI-assisted software-engineering workflows
-- Reliable asynchronous backend infrastructure
-- Evaluation, maintainability, and developer productivity
+1. **Frame the problem.** Who needs this, and what does success look like?
+2. **Define the boundaries.** Inputs, outputs, failure modes, and data ownership.
+3. **Build a small complete path.** Make the central workflow executable.
+4. **Challenge the happy path.** Test invalid inputs, retries, and missing data.
+5. **Explain the trade-offs.** Document what works, what is limited, and what comes next.
 
 </details>
 
 <details>
-<summary><strong>What I value in a project</strong></summary>
-<br>
+<summary><strong>The questions I want to explore next</strong></summary>
 
-Readable architecture. Explicit limitations. Reproducible setup. Useful tests. Evidence behind performance claims. Software that is understandable to the next person who opens it.
+- How can retrieval systems make their answers easier to verify?
+- Where do AI-assisted development workflows need human review?
+- How should background systems recover without duplicating work?
+- What makes an evaluation useful beyond a polished demo?
+
+These are areas of interest, rather than claims of completed implementations.
 
 </details>
+
+### A portfolio you can actually explore
+
+**[Open the full experience](https://abiaali0.github.io/abiaali0/)** · Search with **⌘ / Ctrl K** · Open project case studies · Compare algorithms · Switch between light and dark
+
+<sub>The expandable sections work here on GitHub. The live simulations run on the linked portfolio.</sub>
 
 ---
 
-<p align="center"><strong>Great software starts with a conversation.</strong><br><br>
-<a href="mailto:aabia013@gmail.com">Say hello</a> · <a href="https://abiaali0.github.io/abiaali0/">Explore the portfolio</a>
-</p>
+<a href="mailto:aabia013@gmail.com"><img src="assets/footer.svg" width="100%" alt="The next idea is the beginning. Email Abia to build something meaningful." /></a>
+
+<p align="center"><a href="mailto:aabia013@gmail.com"><strong>Let's talk</strong></a> &nbsp; · &nbsp; <a href="https://www.linkedin.com/in/abia-a-bab209265/">LinkedIn</a> &nbsp; · &nbsp; <a href="https://abiaali0.github.io/abiaali0/">Explore the portfolio</a></p>
