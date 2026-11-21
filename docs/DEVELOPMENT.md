@@ -25,3 +25,7 @@ Native dialogs support Escape and focus containment. Navigation and controls sup
 `node --check docs/app.js`
 
 Browser checks: category filtering; each case study; command search and empty state; theme switch; grid wall toggles; shortest path; blocked goal; reset; dialog Escape; keyboard navigation. BFS runs locally and is a separate demonstration, not a hosted endpoint of the featured projects.
+
+## Working showcases
+
+`showcase.html` links five editable demonstrations. `demo-worker.js` loads Pyodide 0.28.1 in a worker and imports original source snapshots from `demo-sources.json`. Sources were read from the public project repositories on November 20, 2026. The analyzer only calls ast.parse and RuleVisitor, never executes submitted code. The planner builds a temporary file-name tree, never accesses a visitor's local repository. Matcher uses the original scoring functions. Fraud rules are a JavaScript port; the queue lifecycle is simulated with shortened delays and locally computed statistics. No backend auth or persistent infrastructure is hosted. Source snapshots require manual refresh when their repositories change.

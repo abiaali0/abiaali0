@@ -17,6 +17,11 @@ I'm a **Computer Science student and software engineer in Toronto**, exploring a
 
 ## Selected work
 
+**[Try all five project demos](https://abiaali0.github.io/abiaali0/showcase.html)**
+
+[Task queue](https://abiaali0.github.io/abiaali0/showcase.html#queue) · [Issue planner](https://abiaali0.github.io/abiaali0/showcase.html#agent) · [Code analyzer](https://abiaali0.github.io/abiaali0/showcase.html#analyzer) · [Résumé matcher](https://abiaali0.github.io/abiaali0/showcase.html#match) · [Fraud rules](https://abiaali0.github.io/abiaali0/showcase.html#fraud)
+
+
 <table>
 <tr>
 <td width="50%" valign="top">
