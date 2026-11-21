@@ -70,6 +70,16 @@ I'm a **Computer Science student and software engineer in Toronto**, exploring a
 <sub>Descriptions reflect the current public implementations. Each repository documents its scope and future work.</sub>
 
 
+## Systems in motion
+
+[![A job moves from submission to a worker, retries twice, then completes.](assets/job-motion.svg)](https://abiaali0.github.io/abiaali0/showcase.html#queue)
+
+[Submit a job and trigger retries](https://abiaali0.github.io/abiaali0/showcase.html#queue)
+
+[![BFS explores 82 cells and A* explores 32. Both find a 18-step route.](assets/search-motion.svg)](https://abiaali0.github.io/abiaali0/#lab)
+
+[Draw your own maze and compare the searches](https://abiaali0.github.io/abiaali0/#lab)
+
 ## Go deeper.
 
 <a href="https://abiaali0.github.io/abiaali0/#lab"><img src="assets/explore.svg" width="100%" alt="Beyond the obvious. Enter Abia's interactive engineering playground." /></a>
