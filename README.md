@@ -178,6 +178,27 @@ These are areas of interest, rather than claims of completed implementations.
 
 </details>
 
+## GitHub signal
+
+![Abia Ali’s GitHub stats and language breakdown](assets/signal-stats.svg)
+
+**30 authored commits across 6 public repositories · [5 runnable project demos](https://abiaali0.github.io/abiaali0/showcase.html)**
+
+![Monthly authored commits](assets/signal-graph.svg)
+
+### Contribution snake
+
+![Animated chrome and gold snake visiting active commit days](assets/signal-snake.svg)
+
+<sub>Snapshot through November 20, 2026. The chart and gold calendar squares count authored commits on the default branches of my public repositories over the preceding year. Stars are summed across those repositories. PR and issue counts cover public authored items. Language percentages use tracked source-file bytes by extension.</sub>
+
+### Build log
+
+- [Link five runnable project demos from the portfolio and GitHub profile](https://github.com/abiaali0/abiaali0/commit/3224d9d44e1bc6ea62d6946cad0f774045e359e2)
+- [Expand profile with interactive engineering challenges and visual exploration hub](https://github.com/abiaali0/abiaali0/commit/dee8cb0b28bedd111e21a584ff4596bf9448fbb1)
+- [Refine portfolio with chrome and gold design and comparative pathfinding lab](https://github.com/abiaali0/abiaali0/commit/aeedbc1398908b2d3b86b03076d7c381f491dc76)
+- [Build interactive portfolio and redesign GitHub profile](https://github.com/abiaali0/abiaali0/commit/59b6bcf90dae84ce4ba4a80fce15a9f82307f53a)
+
 ### A portfolio you can actually explore
 
 **[Open the full experience](https://abiaali0.github.io/abiaali0/)** · Search with **⌘ / Ctrl K** · Open project case studies · Compare algorithms · Switch between light and dark
