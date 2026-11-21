@@ -192,12 +192,88 @@ These are areas of interest, rather than claims of completed implementations.
 
 <sub>Snapshot through November 20, 2026. The chart and gold calendar squares count authored commits on the default branches of my public repositories over the preceding year. Stars are summed across those repositories. PR and issue counts cover public authored items. Language percentages use tracked source-file bytes by extension.</sub>
 
-### Build log
+## Build log
 
-- [Link five runnable project demos from the portfolio and GitHub profile](https://github.com/abiaali0/abiaali0/commit/3224d9d44e1bc6ea62d6946cad0f774045e359e2)
-- [Expand profile with interactive engineering challenges and visual exploration hub](https://github.com/abiaali0/abiaali0/commit/dee8cb0b28bedd111e21a584ff4596bf9448fbb1)
-- [Refine portfolio with chrome and gold design and comparative pathfinding lab](https://github.com/abiaali0/abiaali0/commit/aeedbc1398908b2d3b86b03076d7c381f491dc76)
-- [Build interactive portfolio and redesign GitHub profile](https://github.com/abiaali0/abiaali0/commit/59b6bcf90dae84ce4ba4a80fce15a9f82307f53a)
+Open a milestone to see what changed and inspect the commit.
+
+<details>
+<summary><strong>Nov 2026 · Five projects became runnable</strong></summary>
+
+Visitors can edit inputs and inspect outputs from the project cards. The Python analyzer parses the visitor’s sample in the browser.
+
+[Inspect this change](https://github.com/abiaali0/abiaali0/commit/3224d9d44e1bc6ea62d6946cad0f774045e359e2)
+
+</details>
+
+<details>
+<summary><strong>Nov 2026 · Engineering challenges came to the profile</strong></summary>
+
+The README gained prediction prompts about retries, shared state, and search. Each opens directly on GitHub.
+
+[Inspect this change](https://github.com/abiaali0/abiaali0/commit/dee8cb0b28bedd111e21a584ff4596bf9448fbb1)
+
+</details>
+
+<details>
+<summary><strong>Nov 2026 · The pathfinding lab gained a second algorithm</strong></summary>
+
+BFS and A* now run against the same walls. The lab reports how many cells each explores, alongside the length of the shortest route.
+
+[Inspect this change](https://github.com/abiaali0/abiaali0/commit/aeedbc1398908b2d3b86b03076d7c381f491dc76)
+
+</details>
+
+<details>
+<summary><strong>Nov 2026 · The portfolio launched</strong></summary>
+
+The first release connected five public repositories to case studies, added keyboard search, and introduced the editable maze.
+
+[Inspect this change](https://github.com/abiaali0/abiaali0/commit/59b6bcf90dae84ce4ba4a80fce15a9f82307f53a)
+
+</details>
+
+## Research notebook
+
+I’m interested in what happens when a small change to an input changes a system’s answer. Pick an experiment, make a prediction, then open the observation.
+
+| Experiment | Change one thing | Run it |
+| :--- | :--- | :--- |
+| Retrieval relevance | Rename a file while keeping the issue text fixed | [Issue planner](https://abiaali0.github.io/abiaali0/showcase.html#agent) |
+| Explainable scoring | Add one required skill to a sample résumé | [Résumé matcher](https://abiaali0.github.io/abiaali0/showcase.html#match) |
+| Recovery after failure | Interrupt a worker processing the same four numbers | [Queue simulator](https://abiaali0.github.io/abiaali0/showcase.html#queue) |
+
+<details>
+<summary><strong>Retrieval · Can a filename alone change the plan?</strong></summary>
+
+Use the issue title `CSV export`, the description `Export reports`, and two file paths, `app/export_csv.py` and `app/helpers.py`. Run it once. Rename the first file to `app/io.py` and run it again.
+
+**Observation.** The first run retrieves `app/export_csv.py`. The second returns no matching files. The planner scores words in paths, so a relevant module with an uninformative name can disappear from its context.
+
+**What I’d measure next.** On a labelled set of issues, how often does the correct file appear in the first five results?
+
+</details>
+
+<details>
+<summary><strong>Scoring · How much is one missing skill worth?</strong></summary>
+
+Set the job description to `Python Redis Docker` and the résumé to `Python Docker`. Predict the score, then add `Redis` to the résumé.
+
+**Observation.** The score moves from **66.7% to 100%**. All three terms carry equal weight here. The score measures keyword coverage, so adding a single word changes it even without evidence of experience.
+
+**What I’d measure next.** How often does a high score correspond to a résumé that actually demonstrates the skill?
+
+</details>
+
+<details>
+<summary><strong>Reliability · Does a retry change the answer?</strong></summary>
+
+Submit `10, 20, 30, 40` twice. Turn on **Simulate transient failures** for the second run. Compare the event histories before looking at the results.
+
+**Observation.** The second history includes two retries. Both results still contain four values, a sum of **100**, and an average of **25**. Repeating this calculation preserves its result. An operation that sends an email or writes a payment would need a separate check for duplicate effects.
+
+**What I’d measure next.** For a real worker pool, how much do retries increase completion time under load?
+
+</details>
 
 ### A portfolio you can actually explore
 
